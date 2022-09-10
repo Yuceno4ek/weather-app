@@ -82,3 +82,10 @@ body {
 .last {
   border-radius: 0 0 25px 0;
 }
+footer {
+  font-size: 20px;
+  font-weight: 600;
+  font-style: italic;
+  background-color: white;
+  color: black;
+}
