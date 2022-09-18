@@ -1,12 +1,17 @@
 body {
   font-family: "Roboto", sans-serif;
 }
+li {
+  list-style: none;
+}
 .wrapper {
   width: 1000px;
   text-align: center;
   border: 1px solid rgb(158, 155, 155);
   border-radius: 25px;
-  background: url(https://metofficenews.files.wordpress.com/2022/05/raindrops-neatly-positioned-on-window-grey-background-london.jpg?w=1024);
+  /* background: url(https://img.freepik.com/premium-photo/rain-drop-falling-onto-blackboard-with-green-nature-background_34152-328.jpg?w=2000); */
+  background: linear-gradient(to right, rgb(173, 83, 137), rgb(60, 16, 83));
+  background-size: 100%;
   color: white;
   display: block;
   margin: 0 auto;
@@ -33,7 +38,7 @@ body {
   display: flex;
 }
 .location {
-  margin: 15px 645px 0 0;
+  margin: 15px 750px 0 0;
   cursor: pointer;
 }
 .head {
@@ -43,29 +48,37 @@ body {
 }
 .time-head {
   font-size: 80px;
-  padding-right: 150px;
+  padding-right: 105px;
   font-weight: 700;
 }
-.head-paragraph {
-  padding-right: 250px;
-  padding-top: 50px;
-  font-size: 30px;
+.description {
+  text-transform: capitalize;
+}
+.main-list {
+  font-size: 25px;
+  text-align: justify;
+  margin-top: 15px;
 }
 .degrees {
   font-size: 40px;
   font-weight: 700;
+}
+.degrees .active {
+  color: black;
+  cursor: default;
+}
+.degrees .active:hover {
+  text-decoration: none;
 }
 .format-link {
   text-decoration: none;
   color: white;
   cursor: pointer;
 }
-.format-link:hover {
-  color: grey;
-}
+
 .day-week {
-  background-color: rgb(244, 244, 244);
-  color: black;
+  background-color: #fff5fb;
+  color: #3c1053;
   box-shadow: 5px 2px 10px gray;
   cursor: pointer;
 }
@@ -86,6 +99,7 @@ footer {
   font-size: 20px;
   font-weight: 600;
   font-style: italic;
-  background-color: white;
   color: black;
+  text-align: center;
+  margin-top: 10px;
 }

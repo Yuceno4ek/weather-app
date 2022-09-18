@@ -12,6 +12,7 @@ function formatDate() {
     "Friday",
     "Saturday",
   ];
+
   let months = [
     "January",
     "February",
@@ -48,7 +49,7 @@ search.addEventListener("click", searchTown);
 function searchTown(event) {
   event.preventDefault();
   let dataTown = document.querySelector("#search");
-  let town = document.querySelector(".location");
+  let town = document.querySelector(".location-item");
   if (dataTown.value) {
     town.innerHTML = `${dataTown.value}`;
     let apiKey = "366c10bcb6394de49050d3d5f0ee5608";
@@ -62,13 +63,30 @@ function searchTown(event) {
 }
 
 function showWeather(response) {
-  // let town = response.data.name;
+  console.log(response.data);
   let temperature = Math.round(response.data.main.temp);
-  let locationItem = document.querySelector(".location");
-  let currentDegrees = document.querySelector(".degrees");
-  currentDegrees.innerHTML = `${temperature}°C`;
-
+  let locationItem = document.querySelector(".location-item");
+  let currentDegreesmin = document.querySelector(".degreesmin-temperature");
+  let currentDegreesmax = document.querySelector(".degreesmax-temperature");
+  let windSpeed = document.querySelector("#wind-speed");
+  let feelsLike = document.querySelector("#feels-like");
+  let humidity = document.querySelector("#humidity-value");
+  let description = document.querySelector("#description");
+  let iconElement = document.querySelector("#icon");
+  currentDegreesmax.innerHTML = Math.round(response.data.main.temp_max);
+  currentDegreesmin.innerHTML = Math.round(response.data.main.temp_min);
   locationItem.innerHTML = response.data.name;
+  windSpeed.innerHTML = Math.round(response.data.wind.speed);
+  feelsLike.innerHTML = Math.round(response.data.main.feels_like);
+  humidity.innerHTML = Math.round(response.data.main.humidity);
+  description.innerHTML = response.data.weather[0].description;
+  celsiusTemperaturemin = response.data.main.temp_min;
+  celsiusTemperaturemax = response.data.main.temp_max;
+  iconElement.setAttribute(
+    "src",
+    `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`
+  );
+  iconElement.setAttribute("alt", response.data.weather[0].description);
 }
 let currentLocation = document.querySelector(".fa-location-crosshairs");
 currentLocation.addEventListener("click", function () {
@@ -82,3 +100,31 @@ currentLocation.addEventListener("click", function () {
 
   navigator.geolocation.getCurrentPosition(retrievePosition);
 });
+
+function showFartnheitWeather(event) {
+  event.preventDefault();
+  let farenheitTemperaturmin = (celsiusTemperaturemin * 9) / 5 + 32;
+  let farenheitTemperaturmax = (celsiusTemperaturemax * 9) / 5 + 32;
+  celsiusLink.classList.remove("active");
+  fartnheitLink.classList.add("active");
+  let minTemperature = document.querySelector(".degreesmin-temperature");
+  let maxTemperature = document.querySelector(".degreesmax-temperature");
+  minTemperature.innerHTML = Math.round(farenheitTemperaturmin);
+  maxTemperature.innerHTML = Math.round(farenheitTemperaturmax);
+}
+function showCelciyWeather(event) {
+  event.preventDefault();
+  celsiusLink.classList.add("active");
+  fartnheitLink.classList.remove("active");
+  let minTemperature = document.querySelector(".degreesmin-temperature");
+  let maxTemperature = document.querySelector(".degreesmax-temperature");
+  minTemperature.innerHTML = Math.round(celsiusTemperaturemin);
+  maxTemperature.innerHTML = Math.round(celsiusTemperaturemax);
+}
+let celsiusTemperaturemin = null;
+let celsiusTemperaturemax = null;
+let fartnheitLink = document.querySelector(".farin");
+fartnheitLink.addEventListener("click", showFartnheitWeather);
+
+let celsiusLink = document.querySelector(".celsy");
+celsiusLink.addEventListener("click", showCelciyWeather);
