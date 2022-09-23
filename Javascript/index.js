@@ -48,6 +48,21 @@ currentHours.innerHTML = formatTime(new Date());
 let search = document.querySelector(".search-btn");
 search.addEventListener("click", searchTown);
 
+function formatDay(timestamp) {
+  let date = new Date(timestamp * 1000);
+  let day = date.getDay();
+  let days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  return days[day];
+}
+
 // --------------------Search--------------------
 function searchTown(event) {
   event.preventDefault();
@@ -55,7 +70,7 @@ function searchTown(event) {
   let town = document.querySelector(".location-item");
   if (dataTown.value) {
     town.innerHTML = `${dataTown.value}`;
-    let apiKey = "366c10bcb6394de49050d3d5f0ee5608";
+    let apiKey = "e947cb2640f1db92e6a19005bc43b435";
     let city = dataTown.value;
     let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
     axios.get(apiUrl).then(showWeather);
@@ -66,29 +81,29 @@ function searchTown(event) {
 }
 
 function searchWeather(city) {
-  let apiKey = "366c10bcb6394de49050d3d5f0ee5608";
+  let apiKey = "e947cb2640f1db92e6a19005bc43b435";
   let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
   axios.get(apiUrl).then(showWeather);
 }
 // -------------------------Forecast----------------------
 
 function displayForecast(response) {
+  let forecast = response.data.daily;
   let forecastElement = document.querySelector("#forecast");
-  let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
 
   let forecastHTML = `<div class="row weather-forecast" >`;
-  days.forEach(function (day) {
-    forecastHTML =
-      forecastHTML +
-      `<div class="day-week col first">
-              <h2 class="day-week-call">${day}</h2>
-                 <img
-          src="http://openweathermap.org/img/wn/50d@2x.png"
-          alt=""
-          width="42"
-        />
-              <p class="current-degrees"><span>18 °</span><span>25 °</span></p>
+  forecast.forEach(function (forecastDay, index) {
+    if (index < 5) {
+      forecastHTML =
+        forecastHTML +
+        `<div class="day-week col first">
+              <h2 class="day-week-call">${formatDay(forecastDay.dt)}</h2>
+                <img src="img/${forecastDay.weather[0].icon}.svg" />
+              <p class="current-degrees"><span>${Math.round(
+                forecastDay.temp.min
+              )} °</span><span>${Math.round(forecastDay.temp.max)} °</span></p>
             </div>`;
+    }
   });
 
   forecastHTML = forecastHTML + `</div>`;
@@ -96,7 +111,7 @@ function displayForecast(response) {
 }
 function getForecast(coordinates) {
   console.log(coordinates);
-  let apiKey = "366c10bcb6394de49050d3d5f0ee5608";
+  let apiKey = "e947cb2640f1db92e6a19005bc43b435";
   let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&units=metric`;
   axios.get(apiUrl).then(displayForecast);
 }
@@ -120,61 +135,10 @@ function showWeather(response) {
   description.innerHTML = response.data.weather[0].description;
   celsiusTemperaturemin = response.data.main.temp_min;
   celsiusTemperaturemax = response.data.main.temp_max;
+  let currentIcon = response.data.weather[0].icon;
+  iconElement.setAttribute("src", `img/${currentIcon}.svg`);
+  console.log(response.data.weather[0].icon);
 
-  // ------------------Change icons----------------------
-
-  let weatherNumber = response.data.weather[0].id;
-
-  let weatherIcon;
-  switch (weatherNumber) {
-    case (200, 201, 202, 210, 211, 212, 221, 230, 231, 232):
-      weatherIcon = document.querySelector("#icon").src = "img/thunder.svg";
-      break;
-    case (300, 301, 302, 310, 311, 312, 313, 314, 321):
-      weatherIcon = document.querySelector("#icon").src = "img/rainy-7.svg";
-      break;
-    case 500:
-      weatherIcon = document.querySelector("#icon").src = "img/rainy-1.svg";
-      break;
-    case 501:
-      weatherIcon = document.querySelector("#icon").src = "img/rainy-2.svg";
-      break;
-    case 502:
-      weatherIcon = document.querySelector("#icon").src = "img/rainy-3.svg";
-      break;
-    case 503:
-      weatherIcon = document.querySelector("#icon").src = "img/rainy-4.svg";
-      break;
-    case (504, 511):
-      weatherIcon = document.querySelector("#icon").src = "img/rainy-5.svg";
-      break;
-    case (520, 521, 522, 531):
-      weatherIcon = document.querySelector("#icon").src = "img/rainy-6.svg";
-      break;
-    case 600:
-      weatherIcon = document.querySelector("#icon").src = "img/snowy-1.svg";
-      break;
-    case 601:
-      weatherIcon = document.querySelector("#icon").src = "img/snowy-2.svg";
-      break;
-    case 602:
-      weatherIcon = document.querySelector("#icon").src = "img/snowy-3.svg";
-      break;
-    case 611:
-      weatherIcon = document.querySelector("#icon").src = "img/snowy-4.svg";
-      break;
-    case 612:
-      weatherIcon = document.querySelector("#icon").src = "img/snowy-5.svg";
-      break;
-    case (613, 615, 616, 620, 621, 622):
-      weatherIcon = document.querySelector("#icon").src = "img/snowy-6.svg";
-      break;
-    case 800:
-      weatherIcon = document.querySelector("#icon").src = "img/day.svg";
-      break;
-    default:
-      weatherIcon = document.querySelector("#icon").src = "img/cloudy.svg";
-  }
   getForecast(response.data.coord);
 }
 let currentLocation = document.querySelector(".fa-location-crosshairs");
@@ -182,7 +146,7 @@ currentLocation.addEventListener("click", function () {
   function retrievePosition(position) {
     let lat = position.coords.latitude;
     let lon = position.coords.longitude;
-    let apiKey = "366c10bcb6394de49050d3d5f0ee5608";
+    let apiKey = "e947cb2640f1db92e6a19005bc43b435";
     let apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
     axios.get(`${apiUrl}&appid=${apiKey}`).then(showWeather);
   }
@@ -192,6 +156,7 @@ currentLocation.addEventListener("click", function () {
 
 function showFartnheitWeather(event) {
   event.preventDefault();
+
   let farenheitTemperaturmin = (celsiusTemperaturemin * 9) / 5 + 32;
   let farenheitTemperaturmax = (celsiusTemperaturemax * 9) / 5 + 32;
   celsiusLink.classList.remove("active");
@@ -217,3 +182,4 @@ fartnheitLink.addEventListener("click", showFartnheitWeather);
 
 let celsiusLink = document.querySelector(".celsy");
 celsiusLink.addEventListener("click", showCelciyWeather);
+searchWeather("Odessa");
