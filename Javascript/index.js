@@ -27,6 +27,7 @@ function formatDate() {
     "November",
     "December",
   ];
+
   let monthChall1 = months[now.getMonth()];
   let correctDay = days[now.getDay()];
   return `${correctDay} - ${monthChall1} ${date}`;
@@ -46,6 +47,8 @@ currentHours.innerHTML = formatTime(new Date());
 
 let search = document.querySelector(".search-btn");
 search.addEventListener("click", searchTown);
+
+// --------------------Search--------------------
 function searchTown(event) {
   event.preventDefault();
   let dataTown = document.querySelector("#search");
@@ -62,8 +65,43 @@ function searchTown(event) {
   }
 }
 
+function searchWeather(city) {
+  let apiKey = "366c10bcb6394de49050d3d5f0ee5608";
+  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+  axios.get(apiUrl).then(showWeather);
+}
+// -------------------------Forecast----------------------
+
+function displayForecast(response) {
+  let forecastElement = document.querySelector("#forecast");
+  let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+
+  let forecastHTML = `<div class="row weather-forecast" >`;
+  days.forEach(function (day) {
+    forecastHTML =
+      forecastHTML +
+      `<div class="day-week col first">
+              <h2 class="day-week-call">${day}</h2>
+                 <img
+          src="http://openweathermap.org/img/wn/50d@2x.png"
+          alt=""
+          width="42"
+        />
+              <p class="current-degrees"><span>18 °</span><span>25 °</span></p>
+            </div>`;
+  });
+
+  forecastHTML = forecastHTML + `</div>`;
+  forecastElement.innerHTML = forecastHTML;
+}
+function getForecast(coordinates) {
+  console.log(coordinates);
+  let apiKey = "366c10bcb6394de49050d3d5f0ee5608";
+  let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&units=metric`;
+  axios.get(apiUrl).then(displayForecast);
+}
+
 function showWeather(response) {
-  console.log(response.data);
   let temperature = Math.round(response.data.main.temp);
   let locationItem = document.querySelector(".location-item");
   let currentDegreesmin = document.querySelector(".degreesmin-temperature");
@@ -82,11 +120,62 @@ function showWeather(response) {
   description.innerHTML = response.data.weather[0].description;
   celsiusTemperaturemin = response.data.main.temp_min;
   celsiusTemperaturemax = response.data.main.temp_max;
-  iconElement.setAttribute(
-    "src",
-    `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`
-  );
-  iconElement.setAttribute("alt", response.data.weather[0].description);
+
+  // ------------------Change icons----------------------
+
+  let weatherNumber = response.data.weather[0].id;
+
+  let weatherIcon;
+  switch (weatherNumber) {
+    case (200, 201, 202, 210, 211, 212, 221, 230, 231, 232):
+      weatherIcon = document.querySelector("#icon").src = "img/thunder.svg";
+      break;
+    case (300, 301, 302, 310, 311, 312, 313, 314, 321):
+      weatherIcon = document.querySelector("#icon").src = "img/rainy-7.svg";
+      break;
+    case 500:
+      weatherIcon = document.querySelector("#icon").src = "img/rainy-1.svg";
+      break;
+    case 501:
+      weatherIcon = document.querySelector("#icon").src = "img/rainy-2.svg";
+      break;
+    case 502:
+      weatherIcon = document.querySelector("#icon").src = "img/rainy-3.svg";
+      break;
+    case 503:
+      weatherIcon = document.querySelector("#icon").src = "img/rainy-4.svg";
+      break;
+    case (504, 511):
+      weatherIcon = document.querySelector("#icon").src = "img/rainy-5.svg";
+      break;
+    case (520, 521, 522, 531):
+      weatherIcon = document.querySelector("#icon").src = "img/rainy-6.svg";
+      break;
+    case 600:
+      weatherIcon = document.querySelector("#icon").src = "img/snowy-1.svg";
+      break;
+    case 601:
+      weatherIcon = document.querySelector("#icon").src = "img/snowy-2.svg";
+      break;
+    case 602:
+      weatherIcon = document.querySelector("#icon").src = "img/snowy-3.svg";
+      break;
+    case 611:
+      weatherIcon = document.querySelector("#icon").src = "img/snowy-4.svg";
+      break;
+    case 612:
+      weatherIcon = document.querySelector("#icon").src = "img/snowy-5.svg";
+      break;
+    case (613, 615, 616, 620, 621, 622):
+      weatherIcon = document.querySelector("#icon").src = "img/snowy-6.svg";
+      break;
+    case 800:
+      weatherIcon = document.querySelector("#icon").src = "img/day.svg";
+      break;
+    default:
+      weatherIcon = document.querySelector("#icon").src = "img/cloudy.svg";
+  }
+  getForecast(response.data.coord);
 }
 let currentLocation = document.querySelector(".fa-location-crosshairs");
 currentLocation.addEventListener("click", function () {
