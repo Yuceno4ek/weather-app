@@ -110,7 +110,6 @@ function displayForecast(response) {
   forecastElement.innerHTML = forecastHTML;
 }
 function getForecast(coordinates) {
-  console.log(coordinates);
   let apiKey = "e947cb2640f1db92e6a19005bc43b435";
   let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&units=metric`;
   axios.get(apiUrl).then(displayForecast);
@@ -126,6 +125,7 @@ function showWeather(response) {
   let humidity = document.querySelector("#humidity-value");
   let description = document.querySelector("#description");
   let iconElement = document.querySelector("#icon");
+  let country = document.querySelector(".location-country");
   currentDegreesmax.innerHTML = Math.round(response.data.main.temp_max);
   currentDegreesmin.innerHTML = Math.round(response.data.main.temp_min);
   locationItem.innerHTML = response.data.name;
@@ -135,11 +135,12 @@ function showWeather(response) {
   description.innerHTML = response.data.weather[0].description;
   celsiusTemperaturemin = response.data.main.temp_min;
   celsiusTemperaturemax = response.data.main.temp_max;
+  country.innerHTML = response.data.sys.country;
   let currentIcon = response.data.weather[0].icon;
   iconElement.setAttribute("src", `img/${currentIcon}.svg`);
-  console.log(response.data.weather[0].icon);
 
   getForecast(response.data.coord);
+  console.log(response.data);
 }
 let currentLocation = document.querySelector(".fa-location-crosshairs");
 currentLocation.addEventListener("click", function () {
